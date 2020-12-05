@@ -121,3 +121,4 @@ ggplotly(USDeathsPlot)
 #Saves a copy of the plots to your working directory. You must have Orca correctly installed, see: https://plotly.com/r/static-image-export/ ##
 
 orca(USDeathsPlot, "USDeathsPlot.png")
+orca(USCasePlot,"USCasePlot.png")
