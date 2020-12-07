@@ -216,24 +216,20 @@ orca(USNewCasePlot, "USNewCasePlot.png")
 orca(USNewDeathPlot, "USNewDeathPlot.png")
 
 ##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
-#write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
-#write_csv(NewDeathAggregatedByStateDFLong, "NewDeathsPerDayByState.csv")
-#write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
-#write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
-#write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
-#write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
+write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
+write_csv(NewDeathAggregatedByStateDFLong, "NewDeathsPerDayByState.csv")
+write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
+write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
+write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
+write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
 
 
 ##Returns to original working directory##
-#setwd(wd)
+setwd(wd)
 
 
 ###Prints a number of descriptive statistics to the console##
 sprintf("The total number of COVID-19 cases in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalCasesString)
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
-<<<<<<< HEAD
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
-=======
-sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
->>>>>>> ce3cdc27eafcf3c2cfc8625043f911a931e96f6d
