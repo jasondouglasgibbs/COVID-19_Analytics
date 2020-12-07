@@ -106,8 +106,8 @@ CasePerDayColumns<-ncol(NewCasesPerDay)
 for (j in 2:CasePerDayColumns){
   for (i in 1:CasePerDayRows){
     NewCasesPerDay[i,j]=abs(CasePerDayCalculate[i,j]-CasePerDayCalculate[i,j-1])
-  next}
-next  
+    next}
+  next  
 }
 
 NewCasesPerDayOriginal<-NewCasesPerDay
@@ -232,4 +232,8 @@ orca(USNewDeathPlot, "USNewDeathPlot.png")
 sprintf("The total number of COVID-19 cases in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalCasesString)
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
+<<<<<<< HEAD
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
+=======
+sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
+>>>>>>> ce3cdc27eafcf3c2cfc8625043f911a931e96f6d
