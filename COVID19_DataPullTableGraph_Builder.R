@@ -203,7 +203,7 @@ USNewDeathPlot<-ggplot(USTotalNewDeathsByDateDF, aes(x=Dates, y=USTotalNewDeaths
 ggplotly(USNewDeathPlot)
 
 
-##Outputs##
+#################################Outputs###################################################
 ##Create a Directory for Today##
 DirectoryChar<-as.character(today())
 dir.create(DirectoryChar, showWarnings = FALSE)
