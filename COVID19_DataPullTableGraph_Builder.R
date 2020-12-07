@@ -93,6 +93,12 @@ ggplotly(DeathPlot)
 
 #######################New Cases/Deaths Per Day###############################
 
+##This code uses two "for" loops to iterate through the cummulative COVID-19 data##
+## from Johns Hopkins. "i" corresponds to rows (IE: looping through each state on##
+## a given day). "j" corresponds to columns (IE: looping through each day). It is assumed##
+## that column one's values constitute "new" values for purposes of this analysis, that is##
+## why "j" starts at "2".##
+
 ##Cases##
 NewCasesPerDay<-CaseAggregatedByState
 CasePerDayCalculate<-CaseAggregatedByState
@@ -100,7 +106,7 @@ CasePerDayRows<-nrow(NewCasesPerDay)
 CasePerDayColumns<-ncol(NewCasesPerDay)
 for (j in 2:CasePerDayColumns){
   for (i in 1:CasePerDayRows){
-    NewCasesPerDay[i,j]=CasePerDayCalculate[i,j]-CasePerDayCalculate[i,j-1]
+    NewCasesPerDay[i,j]=abs(CasePerDayCalculate[i,j]-CasePerDayCalculate[i,j-1])
   next}
 next  
 }
@@ -118,7 +124,7 @@ DeathPerDayRows<-nrow(NewDeathsPerDay)
 DeathPerDayColumns<-ncol(NewDeathsPerDay)
 for (j in 2:DeathPerDayColumns){
   for (i in 1:DeathPerDayRows){
-    NewDeathsPerDay[i,j]=DeathPerDayCalculate[i,j]-DeathPerDayCalculate[i,j-1]
+    NewDeathsPerDay[i,j]=abs(DeathPerDayCalculate[i,j]-DeathPerDayCalculate[i,j-1])
     next}
   next  
 }
