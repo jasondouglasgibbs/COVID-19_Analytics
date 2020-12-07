@@ -91,7 +91,42 @@ DeathPlot<-ggplot(DeathAggregatedByStateDFLong, aes(x=Dates, y=Death, group=Stat
 ggplotly(DeathPlot)
 
 
-#########################US Total Graphs##################################
+#######################New Cases/Deaths Per Day###############################
+
+##Cases##
+NewCasesPerDay<-CaseAggregatedByState
+CasePerDayCalculate<-CaseAggregatedByState
+CasePerDayRows<-nrow(NewCasesPerDay)
+CasePerDayColumns<-ncol(NewCasesPerDay)
+for (j in 2:CasePerDayColumns){
+  for (i in 1:CasePerDayRows){
+    NewCasesPerDay[i,j]=CasePerDayCalculate[i,j]-CasePerDayCalculate[i,j-1]
+  next}
+next  
+}
+
+USNewCases<-as.numeric(sum(NewCasesPerDay[,CasePerDayColumns]))
+USNewCasesString<-comma_format()(USNewCases)
+sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
+
+##Deaths##
+NewDeathsPerDay<-DeathAggregatedByState
+DeathPerDayCalculate<-DeathAggregatedByState
+DeathPerDayRows<-nrow(NewDeathsPerDay)
+DeathPerDayColumns<-ncol(NewDeathsPerDay)
+for (j in 2:DeathPerDayColumns){
+  for (i in 1:DeathPerDayRows){
+    NewDeathsPerDay[i,j]=DeathPerDayCalculate[i,j]-DeathPerDayCalculate[i,j-1]
+    next}
+  next  
+}
+
+USNewDeaths<-as.numeric(sum(NewDeathsPerDay[,DeathPerDayColumns]))
+USNewDeathsString<-comma_format()(USNewDeaths)
+sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
+
+
+#########################US Total Graphs#####################################
 
 ##Cases##
 USTotalCases<-COVID_US_Cases_Data_Original
