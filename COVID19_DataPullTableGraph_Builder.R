@@ -105,6 +105,8 @@ for (j in 2:CasePerDayColumns){
 next  
 }
 
+NewCasesPerDayOriginal<-NewCasesPerDay
+
 USNewCases<-as.numeric(sum(NewCasesPerDay[,CasePerDayColumns]))
 USNewCasesString<-comma_format()(USNewCases)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
@@ -121,10 +123,30 @@ for (j in 2:DeathPerDayColumns){
   next  
 }
 
+NewDeathsPerDayOriginal<-NewDeathsPerDay
+
 USNewDeaths<-as.numeric(sum(NewDeathsPerDay[,DeathPerDayColumns]))
 USNewDeathsString<-comma_format()(USNewDeaths)
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
 
+##New State Cases/Deaths Graphs##
+##Cases##
+CasePerDayStates<-row.names(NewCasesPerDay)
+NewCasesPerDay$State<-CasePerDayStates
+##Gather command below changes data from wide to long format to enable using ggplot and plotly##
+NewCaseAggregatedByStateDFLong<- NewCasesPerDay %>% gather(Date, Case,-State)
+NewCaseAggregatedByStateDFLong$Dates<-as.Date(NewCaseAggregatedByStateDFLong$Date, format = "%m/%d/%y")
+NewCasePlot<-ggplot(NewCaseAggregatedByStateDFLong, aes(x=Dates, y=Case, group=State, color=State))+geom_point()+labs(x="Month",y="New Cases", title="Number of new cases of COVID-19 by State Over Time")+scale_y_continuous(labels=comma)
+ggplotly(NewCasePlot)
+
+##Deaths##
+DeathPerDayStates<-row.names(NewDeathsPerDay)
+NewDeathsPerDay$State<-DeathPerDayStates
+##Gather command below changes data from wide to long format to enable using ggplot and plotly##
+NewDeathAggregatedByStateDFLong<- NewDeathsPerDay %>% gather(Date, Death,-State)
+NewDeathAggregatedByStateDFLong$Dates<-as.Date(NewDeathAggregatedByStateDFLong$Date, format = "%m/%d/%y")
+NewDeathPlot<-ggplot(NewDeathAggregatedByStateDFLong, aes(x=Dates, y=Death, group=State, color=State))+geom_point()+labs(x="Month",y="New Deaths", title="Number of new COVID-19 related deaths by State Over Time")+scale_y_continuous(labels=comma)
+ggplotly(NewDeathPlot)
 
 #########################US Total Graphs#####################################
 
@@ -149,6 +171,31 @@ USTotalDeathsByDateDF$Dates<-row.names(USTotalDeathsByDateDF)
 USTotalDeathsByDateDF$Dates<-as.Date(USTotalDeathsByDateDF$Dates, format = "%m/%d/%y")
 USDeathsPlot<-ggplot(USTotalDeathsByDateDF, aes(x=Dates, y=USDeaths))+geom_point()+labs(x="Month",y="Cummulative Deaths", title="Total Number of US COVID-19 Deaths Over Time")+scale_y_continuous(labels=comma)
 ggplotly(USDeathsPlot)
+
+
+#########################US New Graphs#####################################
+##Cases##
+NewUSCasesWorking<-NewCasesPerDayOriginal
+NewUSCaseRows<-nrow(NewUSCasesWorking)
+NewUSCaseColumns<-ncol(NewUSCasesWorking)
+USTotalNewCasesByDate<-colSums(NewUSCasesWorking[,1:NewUSCaseColumns])
+USTotalNewCasesByDateDF<-as.data.frame(USTotalNewCasesByDate)
+USTotalNewCasesByDateDF$Dates<-row.names(USTotalNewCasesByDateDF)
+USTotalNewCasesByDateDF$Dates<-as.Date(USTotalNewCasesByDateDF$Dates, format = "%m/%d/%y")
+USNewCasePlot<-ggplot(USTotalNewCasesByDateDF, aes(x=Dates, y=USTotalNewCasesByDate))+geom_point()+labs(x="Month",y="New Cases", title="Number of New US COVID-19 Cases Over Time")+scale_y_continuous(labels=comma)
+ggplotly(USNewCasePlot)
+
+
+##Deaths##
+NewUSDeathsWorking<-NewDeathsPerDayOriginal
+NewUSDeathRows<-nrow(NewUSDeathsWorking)
+NewUSDeathColumns<-ncol(NewUSDeathsWorking)
+USTotalNewDeathsByDate<-colSums(NewUSDeathsWorking[,1:NewUSDeathColumns])
+USTotalNewDeathsByDateDF<-as.data.frame(USTotalNewDeathsByDate)
+USTotalNewDeathsByDateDF$Dates<-row.names(USTotalNewDeathsByDateDF)
+USTotalNewDeathsByDateDF$Dates<-as.Date(USTotalNewDeathsByDateDF$Dates, format = "%m/%d/%y")
+USNewDeathPlot<-ggplot(USTotalNewDeathsByDateDF, aes(x=Dates, y=USTotalNewDeathsByDate))+geom_point()+labs(x="Month",y="New Deaths", title="Number of New US COVID-19 Deaths Over Time")+scale_y_continuous(labels=comma)
+ggplotly(USNewDeathPlot)
 
 
 ##Outputs##
