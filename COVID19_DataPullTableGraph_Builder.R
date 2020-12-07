@@ -225,7 +225,7 @@ orca(USNewDeathPlot, "USNewDeathPlot.png")
 
 
 ##Returns to original working directory##
-setwd(wd)
+#setwd(wd)
 
 
 ###Prints a number of descriptive statistics to the console##
