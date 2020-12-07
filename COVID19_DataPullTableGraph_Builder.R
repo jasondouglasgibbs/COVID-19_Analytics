@@ -13,13 +13,14 @@ library(tidyr)
 library(orca)
 library(processx)
 #Set working directory for personal laptop#
-setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+#setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 
 #Set working directory for work laptop#
 #setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")
 
 #Set working directory for desktop computer#
-#setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+wd<-getwd()
 
 ##US Confirmed Cases##
 ##Pulls data from Johns Hopkins CSSE GitHub at the below link, turns into a TidyVerse tibble##
@@ -42,7 +43,6 @@ COVID_US_Cases_Data$Total<-COVID_US_Cases_Data[,ncol(COVID_US_Cases_Data)]
 StateCases<-COVID_US_Cases_Data %>% group_by(Province_State) %>% summarize(sum=sum(Total))
 USTotalCases<-as.numeric(sum(COVID_US_Cases_Data$Total))
 USTotalCasesString<-comma_format()(USTotalCases)
-sprintf("The total number of COVID-19 cases in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalCasesString)
 
 
 ##Summarize Deaths##
@@ -50,7 +50,6 @@ COVID_US_Deaths_Data$Total<-COVID_US_Deaths_Data[,ncol(COVID_US_Deaths_Data)]
 StateDeaths<-COVID_US_Deaths_Data %>% group_by(Province_State) %>% summarize(sum=sum(Total))
 USTotalDeaths<-as.numeric(sum(COVID_US_Deaths_Data$Total))
 USTotalDeathsString<-comma_format()(USTotalDeaths)
-sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 
 
 #########################By State Graphs and Tables##################################
@@ -107,15 +106,15 @@ CasePerDayColumns<-ncol(NewCasesPerDay)
 for (j in 2:CasePerDayColumns){
   for (i in 1:CasePerDayRows){
     NewCasesPerDay[i,j]=abs(CasePerDayCalculate[i,j]-CasePerDayCalculate[i,j-1])
-  next}
-next  
+    next}
+  next  
 }
 
 NewCasesPerDayOriginal<-NewCasesPerDay
 
 USNewCases<-as.numeric(sum(NewCasesPerDay[,CasePerDayColumns]))
 USNewCasesString<-comma_format()(USNewCases)
-sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
+
 
 ##Deaths##
 NewDeathsPerDay<-DeathAggregatedByState
@@ -133,7 +132,6 @@ NewDeathsPerDayOriginal<-NewDeathsPerDay
 
 USNewDeaths<-as.numeric(sum(NewDeathsPerDay[,DeathPerDayColumns]))
 USNewDeathsString<-comma_format()(USNewDeaths)
-sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
 
 ##New State Cases/Deaths Graphs##
 ##Cases##
@@ -205,7 +203,33 @@ ggplotly(USNewDeathPlot)
 
 
 ##Outputs##
+##Create a Directory for Today##
+DirectoryChar<-as.character(today())
+dir.create(DirectoryChar, showWarnings = FALSE)
+OutputWD<-file.path(wd,DirectoryChar)
+setwd(OutputWD)
 
-#Saves a copy of the plots to your working directory. You must have Orca correctly installed, see: https://plotly.com/r/static-image-export/ ##
+##Saves a copy of the plots to a folder for today within your working directory. You must have Orca correctly installed, see: https://plotly.com/r/static-image-export/ ##
 orca(USDeathsPlot, "USDeathsPlot.png")
 orca(USCasePlot,"USCasePlot.png")
+orca(USNewCasePlot, "USNewCasePlot.png")
+orca(USNewDeathPlot, "USNewDeathPlot.png")
+
+##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
+#write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
+#write_csv(NewDeathAggregatedByStateDFLong, "NewDeathsPerDayByState.csv")
+#write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
+#write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
+#write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
+#write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
+
+
+##Returns to original working directory##
+#setwd(wd)
+
+
+###Prints a number of descriptive statistics to the console##
+sprintf("The total number of COVID-19 cases in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalCasesString)
+sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
+sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
+sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
