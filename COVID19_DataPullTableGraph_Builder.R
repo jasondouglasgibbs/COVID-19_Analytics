@@ -20,8 +20,12 @@ library(processx)
 
 #Set working directory for desktop computer#
 setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
-wd<-getwd()
 
+
+
+
+
+wd<-getwd()
 ##US Confirmed Cases##
 ##Pulls data from Johns Hopkins CSSE GitHub at the below link, turns into a TidyVerse tibble##
 URL_Cases<-"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
