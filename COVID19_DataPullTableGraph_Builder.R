@@ -216,12 +216,12 @@ orca(USNewCasePlot, "USNewCasePlot.png")
 orca(USNewDeathPlot, "USNewDeathPlot.png")
 
 ##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
-write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
-write_csv(NewDeathAggregatedByStateDFLong, "NewDeathsPerDayByState.csv")
-write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
-write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
-write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
-write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
+#write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
+#write_csv(NewDeathAggregatedByStateDFLong, "NewDeathsPerDayByState.csv")
+#write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
+#write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
+#write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
+#write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
 
 
 ##Returns to original working directory##
