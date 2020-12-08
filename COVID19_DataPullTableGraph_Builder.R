@@ -13,13 +13,13 @@ library(tidyr)
 library(orca)
 library(processx)
 ##Set working directory for personal laptop##
-##setwd("D:\\Users\\fight\\Documents\\COVID19 Code")##
+setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 
 ##Set working directory for work laptop##
 ##setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")##
 
 ##Set working directory for desktop computer##
-setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+#setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
 
 ##Sets a variable for the working directory for use at the end of the script##
 wd<-getwd()
