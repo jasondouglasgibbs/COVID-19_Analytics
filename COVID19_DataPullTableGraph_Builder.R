@@ -1,5 +1,5 @@
 ##COVID-19 Data Pull, Aggregation, and Plotting Code##
-##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page.##
+##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the Centers for Civic Impact GitHub page.##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
 library(tidyverse)
 library(tidyselect)
@@ -12,6 +12,7 @@ library(plotly)
 library(tidyr)
 library(orca)
 library(processx)
+
 ##Set working directory for personal laptop##
 setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 
@@ -23,6 +24,8 @@ setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 
 ##Sets a variable for the working directory for use at the end of the script##
 wd<-getwd()
+
+#########################Case and Death Data Pulling and Summarizing##################################
 
 ##US Confirmed Cases##
 ##Pulls data from Johns Hopkins CSSE GitHub at the below link, turns into a TidyVerse tibble##
@@ -266,3 +269,5 @@ sprintf("The total number of COVID-19 cases in the United States from 2020-01-22
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
+sprintf("The number of people in the US that have received one dose of COVID-19 vaccine is %s", USTotalVaccineOneDoseString)
+sprintf("The number of people in the US that have received a full dose of COVID-19 vaccine is %s", USTotalVaccineFullDoseString)
