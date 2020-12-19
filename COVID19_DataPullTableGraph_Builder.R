@@ -209,8 +209,12 @@ ggplotly(USNewDeathPlot)
 
 #################################Vaccines###################################################
 URL_Vaccines<-"https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/raw_data/vaccine_data_us_state_timeline.csv"
+URL_Vaccines_DataDictionary<-"https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/raw_data/data_dictionary.csv"
 COVID_US_Vaccines_Data_Original<-read_csv(URL_Vaccines)
+COVID_US_Vaccines_Data_Original_Dictionary<-read_csv(URL_Vaccines_DataDictionary)
 COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original
+
+
 VaccineRows<-nrow(COVID_US_Vaccines_Data_Working)
 VaccineColumns<-ncol(COVID_US_Vaccines_Data_Working)
 ##Summarize Total Single Dose Vaccine Information##
@@ -257,6 +261,8 @@ write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
 write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
 write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
 write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
+write_csv(COVID_US_Vaccines_Data_Original, "VaccineOriginalData.csv")
+write_csv(COVID_US_Vaccines_Data_Original_Dictionary, "VaccineOriginalDataDictionary.csv")
 write_csv(StateTotalVaccineOneDose, "SingleVaccineDoseByState.csv")
 write_csv(StateTotalVaccineFullDose, "FullVaccineDoseByState.csv")
 
