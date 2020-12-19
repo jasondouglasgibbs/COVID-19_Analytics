@@ -13,13 +13,13 @@ library(tidyr)
 library(orca)
 library(processx)
 ##Set working directory for personal laptop##
-#setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 
 ##Set working directory for work laptop##
 ##setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")
 
 ##Set working directory for desktop computer##
-setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+#setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
 
 ##Sets a variable for the working directory for use at the end of the script##
 wd<-getwd()
@@ -204,7 +204,35 @@ USNewDeathPlot<-ggplot(USTotalNewDeathsByDateDF, aes(x=Dates, y=USTotalNewDeaths
 ggplotly(USNewDeathPlot)
 
 
-#################################Outputs###################################################
+#################################Vaccines###################################################
+URL_Vaccines<-"https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/raw_data/vaccine_data_us_state_timeline.csv"
+COVID_US_Vaccines_Data_Original<-read_csv(URL_Vaccines)
+COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original
+VaccineRows<-nrow(COVID_US_Vaccines_Data_Working)
+VaccineColumns<-ncol(COVID_US_Vaccines_Data_Working)
+##Summarize Total Single Dose Vaccine Information##
+COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
+StateTotalVaccineOneDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Single Dose"=sum(people_total))
+USTotalVaccineOneDose<-as.numeric(sum(StateTotalVaccineOneDose$`Single Dose`))
+USTotalVaccineOneDoseString<-comma_format()(USTotalVaccineOneDose)
+
+##Summarize Total Full Dose Vaccine Information##
+COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
+StateTotalVaccineFullDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Full Dose"=sum(people_total_2nd_dose))
+USTotalVaccineFullDose<-as.numeric(sum(StateTotalVaccineFullDose$`Full Dose`))
+USTotalVaccineFullDoseString<-comma_format()(USTotalVaccineFullDose)
+
+
+##Vaccine Plots##
+##Single Dose##
+StateVaccineSingleDosePlot<-ggplot(StateTotalVaccineOneDose, aes(x=Province_State, y=`Single Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Single Dose Recipients", title="Number of Recipients of a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineSingleDosePlot)
+
+##Full Dose##
+StateVaccineFullDosePlot<-ggplot(StateTotalVaccineFullDose, aes(x=Province_State, y=`Full Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Full Dose Recipients", title="Number of Recipients of a Full Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineFullDosePlot)
+
+################################Outputs###################################################
 ##Create a Directory for Today##
 DirectoryChar<-as.character(today())
 dir.create(DirectoryChar, showWarnings = FALSE)
@@ -216,6 +244,8 @@ orca(USDeathsPlot, "USDeathsPlot.png")
 orca(USCasePlot,"USCasePlot.png")
 orca(USNewCasePlot, "USNewCasePlot.png")
 orca(USNewDeathPlot, "USNewDeathPlot.png")
+orca(StateVaccineSingleDosePlot, "SingleVaccineDoseByState.png")
+orca(StateVaccineFullDosePlot, "FullVaccineDoseByState.png")
 
 ##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
 write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
@@ -224,7 +254,8 @@ write_csv(USTotalNewCasesByDateDF, "USNewCasesPerDay.csv")
 write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
 write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
 write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
-
+write_csv(StateTotalVaccineOneDose, "SingleVaccineDoseByState.csv")
+write_csv(StateTotalVaccineFullDose, "FullVaccineDoseByState.csv")
 
 ##Returns to original working directory##
 setwd(wd)
