@@ -236,13 +236,19 @@ StatePopulationWorking<-COVID_US_Deaths_Data_Original
 StatePopulationAggregate<-StatePopulationWorking%>%group_by(Province_State)%>%summarize("State Population"=sum(Population))
 StatePopulationAggregate[StatePopulationAggregate==0]<-NA
 StatePopulationAggregate<-na.omit(StatePopulationAggregate)
+TotalUSPopulation<-sum(StatePopulationAggregate$`State Population`)
 ##Merge DFs to compare number of vaccinated individuals versus State/Territory populations##
 SingleDosePercentDF<-merge(StateTotalVaccineOneDose[,c("Province_State","Single Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
 FullDosePercentDF<-merge(StateTotalVaccineFullDose[,c("Province_State","Full Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
 SingleDosePercentDF$Proportion<-(((SingleDosePercentDF$`Single Dose`))/(SingleDosePercentDF$`State Population`))
 FullDosePercentDF$Proportion<-(((FullDosePercentDF$`Full Dose`))/(FullDosePercentDF$`State Population`))
 
-  
+##Other output metrics to feed sprintf statements below##
+USTotalVaccineOneDoseProportion<-(USTotalVaccineOneDose/TotalUSPopulation)
+USTotalVaccineOneDosePercentString<-label_percent()(USTotalVaccineOneDoseProportion)
+USTotalVaccineFullDoseProportion<-(USTotalVaccineFullDose/TotalUSPopulation)
+USTotalVaccineFullDosePercentString<-label_percent()(USTotalVaccineFullDoseProportion)
+
 ##Vaccine Plots##
 ##Single Dose - Raw Numbers##
 StateVaccineSingleDosePlot<-ggplot(StateTotalVaccineOneDose, aes(x=Province_State, y=`Single Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Single Dose Recipients", title="Number of Recipients of a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
@@ -298,5 +304,5 @@ sprintf("The total number of COVID-19 cases in the United States from 2020-01-22
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
-sprintf("The number of people in the US that have received one dose of COVID-19 vaccine is %s", USTotalVaccineOneDoseString)
-sprintf("The number of people in the US that have received a full dose of COVID-19 vaccine is %s", USTotalVaccineFullDoseString)
+sprintf("The number of people in the US that have received one dose of COVID-19 vaccine is %s. This is %s of the total US population.", USTotalVaccineOneDoseString, USTotalVaccineOneDosePercentString)
+sprintf("The number of people in the US that have received a full dose of COVID-19 vaccine is %s. This is %s of the total US population.", USTotalVaccineFullDoseString, USTotalVaccineFullDosePercentString)
