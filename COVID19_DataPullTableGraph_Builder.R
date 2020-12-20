@@ -230,14 +230,35 @@ USTotalVaccineFullDose<-as.numeric(sum(StateTotalVaccineFullDose$`Full Dose`))
 USTotalVaccineFullDoseString<-comma_format()(USTotalVaccineFullDose)
 
 
+##Percent of state population vaccinated##
+##Sum total State/Territory population using column from US Deaths .csv##
+StatePopulationWorking<-COVID_US_Deaths_Data_Original
+StatePopulationAggregate<-StatePopulationWorking%>%group_by(Province_State)%>%summarize("State Population"=sum(Population))
+StatePopulationAggregate[StatePopulationAggregate==0]<-NA
+StatePopulationAggregate<-na.omit(StatePopulationAggregate)
+##Merge DFs to compare number of vaccinated individuals versus State/Territory populations##
+SingleDosePercentDF<-merge(StateTotalVaccineOneDose[,c("Province_State","Single Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
+FullDosePercentDF<-merge(StateTotalVaccineFullDose[,c("Province_State","Full Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
+SingleDosePercentDF$Proportion<-(((SingleDosePercentDF$`Single Dose`))/(SingleDosePercentDF$`State Population`))
+FullDosePercentDF$Proportion<-(((FullDosePercentDF$`Full Dose`))/(FullDosePercentDF$`State Population`))
+
+  
 ##Vaccine Plots##
-##Single Dose##
+##Single Dose - Raw Numbers##
 StateVaccineSingleDosePlot<-ggplot(StateTotalVaccineOneDose, aes(x=Province_State, y=`Single Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Single Dose Recipients", title="Number of Recipients of a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 ggplotly(StateVaccineSingleDosePlot)
 
-##Full Dose##
+##Single Dose - Percent of Total Population##
+StateVaccineSingleDosePercentPlot<-ggplot(SingleDosePercentDF, aes(x=Province_State, y=Proportion, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Single Dose", title="Percent Population with a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineSingleDosePercentPlot)
+
+##Full Dose - Raw Numbers##
 StateVaccineFullDosePlot<-ggplot(StateTotalVaccineFullDose, aes(x=Province_State, y=`Full Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Full Dose Recipients", title="Number of Recipients of a Full Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 ggplotly(StateVaccineFullDosePlot)
+
+##Full Dose - Percent of Total Population##
+StateVaccineFullDosePercentPlot<-ggplot(FullDosePercentDF, aes(x=Province_State, y=Proportion, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Full Dose", title="Percent Population with a Full Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineFullDosePercentPlot)
 
 ################################Outputs###################################################
 ##Create a Directory for Today##
@@ -252,7 +273,9 @@ orca(USCasePlot,"USCasePlot.png")
 orca(USNewCasePlot, "USNewCasePlot.png")
 orca(USNewDeathPlot, "USNewDeathPlot.png")
 orca(StateVaccineSingleDosePlot, "SingleVaccineDoseByState.png")
+orca(StateVaccineSingleDosePercentPlot, "SingleVaccineDoseByStatePercent.png")
 orca(StateVaccineFullDosePlot, "FullVaccineDoseByState.png")
+orca(StateVaccineFullDosePercentPlot, "FullVaccineDoseByStatePercent.png")
 
 ##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
 write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
