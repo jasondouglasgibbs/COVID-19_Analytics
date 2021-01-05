@@ -1,7 +1,6 @@
 ##COVID-19 Data Pull, Aggregation, and Plotting Code##
 ##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the Centers for Civic Impact GitHub page.##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
-##Test Branch Test Code##
 library(tidyverse)
 library(tidyselect)
 library(lubridate)
