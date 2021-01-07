@@ -4,9 +4,14 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    storyboard: true
 ---
 
 ```{r setup, include=FALSE}
+##COVID-19 flexdashboard based on my COVID-19 Data Pull, Aggregation, and Plotting Code##
+##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the Centers for Civic Impact GitHub page.##
+##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
+
 library(flexdashboard)
 library(tidyverse)
 library(tidyselect)
@@ -259,25 +264,55 @@ StateVaccineFullDosePercentPlot<-ggplot(FullDosePercentDF, aes(x=Province_State,
 #ggplotly(StateVaccineFullDosePercentPlot)
 ```
 
-Column {data-width=650}
+```{r}
+#####################Home########################
+```
+Home
+=======================================================================
+### Home
+This dashboard allows you to explore some of the data connected to the ongoing COVID-19 pandemic. There may be some brief load times as the web page file size is fairly large and is being run on a personal server. The graphs are interactive, you can double click a specific state to see only its data. There is a toolbar that will appear when you mouse over the graph that will allow you to auto-scale the graph to get a better idea of what's going on with the data.
+
+I plan on adding more features in the future, such as tabular data and more interactive functions. If you have ideas or are interested in my work, feel free to reach out to me at jasondouglasgibbs@gmail.com. You can also check my GitHub out [here](https://github.com/jasondouglasgibbs).
+
+
+
+
+This dashboard was created using RStudio and the R programming language with various packages. Data used to create these graphs are from [Johns Hopkins CSSE GitHub](https://github.com/CSSEGISandData/COVID-19) for cases/deaths and [Centers for Civic Impact GitHub](https://github.com/govex/COVID-19/tree/master/data_tables/vaccine_data) for vaccine information.
+
+```{r}
+#####################Page 1########################
+```
+Cases
+=======================================================================
+Column
 -----------------------------------------------------------------------
 
-### Chart A
+### Plot showing the cummulative number of COVID-19 cases by state over time.
 
 ```{r}
 ggplotly(CasePlot)
 ```
 
-Column {data-width=350}
+```{r}
+#####################Page 2########################
+```
+Deaths
+=======================================================================
+Column 
 -----------------------------------------------------------------------
 
-### Chart B
+### Plot showing the cummulative number of COVID-19 deaths by state over time.
 
 ```{r}
 ggplotly(DeathPlot)
 ```
 
-### Chart C
+```{r}
+#####################Page 3########################
+```
+Vaccines
+=======================================================================
+### Plot showing the percent of total population that has received one dose of COVID-19 by state.
 
 ```{r}
 ggplotly(StateVaccineSingleDosePercentPlot)
