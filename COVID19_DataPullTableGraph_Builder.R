@@ -218,12 +218,14 @@ COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original
 VaccineRows<-nrow(COVID_US_Vaccines_Data_Working)
 VaccineColumns<-ncol(COVID_US_Vaccines_Data_Working)
 ##Summarize Total Single Dose Vaccine Information##
+COVID_US_Vaccines_Data_Working[,5:18]<-sapply(COVID_US_Vaccines_Data_Working[,5:18], as.numeric)
 COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
 StateTotalVaccineOneDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Single Dose"=max(people_total))
 USTotalVaccineOneDose<-as.numeric(sum(StateTotalVaccineOneDose$`Single Dose`))
 USTotalVaccineOneDoseString<-comma_format()(USTotalVaccineOneDose)
 
 ##Summarize Total Full Dose Vaccine Information##
+COVID_US_Vaccines_Data_Working[,5:18]<-sapply(COVID_US_Vaccines_Data_Working[,5:18], as.numeric)
 COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
 StateTotalVaccineFullDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Full Dose"=max(people_total_2nd_dose))
 USTotalVaccineFullDose<-as.numeric(sum(StateTotalVaccineFullDose$`Full Dose`))
