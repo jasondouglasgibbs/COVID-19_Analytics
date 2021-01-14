@@ -1,5 +1,5 @@
 ##COVID-19 Data Pull, Aggregation, and Plotting Code##
-##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the CDC.##
+##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page at https://github.com/CSSEGISandData/COVID-19 (COVID-19 cases and deaths data) and the CDC at https://covid.cdc.gov/covid-data-tracker/#vaccinations (vaccine data).##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
 
 ##You must have Orca properly installed from https://github.com/plotly/orca ##
@@ -20,15 +20,14 @@ library(processx)
 library(RSelenium)
 library(netstat)
 
-##Set working directory for personal laptop##
+##Set working and default download directory for personal laptop.##
+##Default download directory required to automatically pull CDC vaccine data.##
 setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
 downloadwd<-"D:\\Users\\fight\\Downloads"
 
-##Set working directory for work laptop##
-##setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")
-##downloadwd<-"C:\\Users\\fight\\Downloads"
 
-##Set working directory for desktop computer##
+##Set working and default download directory for personal laptop.##
+##Default download directory required to automatically pull CDC vaccine data.##
 ##setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
 ##downloadwd<-"C:\\Users\\fight\\Downloads"
 
@@ -219,15 +218,23 @@ ggplotly(USNewDeathPlot)
 
 
 #################################Vaccines###################################################
-#Creates a space for the .csv file in case the user has previously downloaded it#
+
+##Tne below code from "options(warn=-1)" to remDr$close() is used to pull CDC vaccination data automatically from their website.##
+##The website currently does not offer a direct link to download the CSV file, so the below code uses the RSelenium package to open##
+##an instance of the Chrome web browser and automatically navigate to and download the CSV.##
+##Ensure you have the correct version of Chrome driver installed (see top comments for link)##
+
+##Creates a space (by deleting any previously downloaded copies) for the .csv file in case the user has previously downloaded it##
 options(warn=-1)
 fullpath<-file.path(downloadwd,'covid19_vaccinations_in_the_united_states.csv')
 file.remove(fullpath)
 options(warn=0)
 
+##RSelenium code to open the Chrome browser##
 rD<-rsDriver(browser="chrome", chromever = "87.0.4280.88", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
+##Sleep time to allow web page time to load##
 Sys.sleep(5)
 webElem<-remDr$findElement(using='id', value='btnVaccinationsExport')
 webElem$highlightElement()
