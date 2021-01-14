@@ -22,14 +22,14 @@ library(netstat)
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
-downloadwd<-"D:\\Users\\fight\\Downloads"
+#setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+#downloadwd<-"D:\\Users\\fight\\Downloads"
 
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-##setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
-##downloadwd<-"C:\\Users\\fight\\Downloads"
+setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+downloadwd<-"C:\\Users\\fight\\Downloads"
 
 
 ##Sets a variable for the working directory for use at the end of the script##
