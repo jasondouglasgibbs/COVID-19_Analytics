@@ -21,16 +21,16 @@ library(RSelenium)
 library(netstat)
 
 ##Set working directory for personal laptop##
-#setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
-##downloadwd<-"C:\\Users\\fight\\Downloads"
+setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+downloadwd<-"D:\\Users\\fight\\Downloads"
 
 ##Set working directory for work laptop##
 ##setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")
 ##downloadwd<-"C:\\Users\\fight\\Downloads"
 
 ##Set working directory for desktop computer##
-setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
-downloadwd<-"C:\\Users\\fight\\Downloads"
+##setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+##downloadwd<-"C:\\Users\\fight\\Downloads"
 
 
 ##Sets a variable for the working directory for use at the end of the script##
