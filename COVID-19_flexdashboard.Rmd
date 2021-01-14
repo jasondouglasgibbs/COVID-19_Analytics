@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-##COVID-19 Data Pull, Aggregation, and Plotting Code##
+##COVID-19  flexdashboard based on my COVID-19 Data Pull, Aggregation, and Plotting Code##
 ##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page at https://github.com/CSSEGISandData/COVID-19 (COVID-19 cases and deaths data) and the CDC at https://covid.cdc.gov/covid-data-tracker/#vaccinations (vaccine data).##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
 
