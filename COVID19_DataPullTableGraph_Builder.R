@@ -1,6 +1,11 @@
 ##COVID-19 Data Pull, Aggregation, and Plotting Code##
-##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the Centers for Civic Impact GitHub page.##
+##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page and the CDC.##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
+
+##You must have Orca properly installed from https://github.com/plotly/orca ##
+##You must have Java JDK installed from https://www.oracle.com/java/technologies/javase-jdk15-downloads.html ##
+##Download Chrome Driver for version 87.0.4280.88 --> https://chromedriver.storage.googleapis.com/index.html?path=87.0.4280.88/ ##
+
 library(tidyverse)
 library(tidyselect)
 library(lubridate)
@@ -12,15 +17,21 @@ library(plotly)
 library(tidyr)
 library(orca)
 library(processx)
+library(RSelenium)
+library(netstat)
 
 ##Set working directory for personal laptop##
 #setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+##downloadwd<-"C:\\Users\\fight\\Downloads"
 
 ##Set working directory for work laptop##
 ##setwd("C:\\Users\\jason.d.gibbs1\\Desktop\\COVID-19 R")
+##downloadwd<-"C:\\Users\\fight\\Downloads"
 
 ##Set working directory for desktop computer##
 setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+downloadwd<-"C:\\Users\\fight\\Downloads"
+
 
 ##Sets a variable for the working directory for use at the end of the script##
 wd<-getwd()
@@ -208,65 +219,46 @@ ggplotly(USNewDeathPlot)
 
 
 #################################Vaccines###################################################
-URL_Vaccines<-"https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/raw_data/vaccine_data_us_state_timeline.csv"
-URL_Vaccines_DataDictionary<-"https://raw.githubusercontent.com/govex/COVID-19/master/data_tables/vaccine_data/raw_data/data_dictionary.csv"
-COVID_US_Vaccines_Data_Original<-read_csv(URL_Vaccines)
-COVID_US_Vaccines_Data_Original_Dictionary<-read_csv(URL_Vaccines_DataDictionary)
-COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original
+#Creates a space for the .csv file in case the user has previously downloaded it#
+options(warn=-1)
+fullpath<-file.path(downloadwd,'covid19_vaccinations_in_the_united_states.csv')
+file.remove(fullpath)
+options(warn=0)
+
+rD<-rsDriver(browser="chrome", chromever = "87.0.4280.88", port=netstat::free_port())
+remDr <- rD$client
+remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
+Sys.sleep(5)
+webElem<-remDr$findElement(using='id', value='btnVaccinationsExport')
+webElem$highlightElement()
+webElem$clickElement()
+Sys.sleep(10)
+
+COVID_US_Vaccines_Data_Original<-read_csv('C:\\Users\\fight\\Downloads\\covid19_vaccinations_in_the_united_states.csv', skip=3)
+COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original[order(COVID_US_Vaccines_Data_Original$`State/Territory/Federal Entity`),]
 
 
-VaccineRows<-nrow(COVID_US_Vaccines_Data_Working)
-VaccineColumns<-ncol(COVID_US_Vaccines_Data_Working)
-##Summarize Total Single Dose Vaccine Information##
-COVID_US_Vaccines_Data_Working[,5:18]<-sapply(COVID_US_Vaccines_Data_Working[,5:18], as.numeric)
+Sys.sleep(5)
+remDr$close()
+
+##Summarize Total Vaccines Administered##
+COVID_US_Vaccines_Data_Working[,4:5]<-sapply(COVID_US_Vaccines_Data_Working[,4:5], as.numeric)
 COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
-StateTotalVaccineOneDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Single Dose"=max(people_total))
-USTotalVaccineOneDose<-as.numeric(sum(StateTotalVaccineOneDose$`Single Dose`))
-USTotalVaccineOneDoseString<-comma_format()(USTotalVaccineOneDose)
+USTotalVaccineAdmin<-as.numeric(sum(COVID_US_Vaccines_Data_Working$`Total Administered`))
+USTotalVaccineAdminString<-comma_format()(USTotalVaccineAdmin)
 
-##Summarize Total Full Dose Vaccine Information##
-COVID_US_Vaccines_Data_Working[,5:18]<-sapply(COVID_US_Vaccines_Data_Working[,5:18], as.numeric)
-COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
-StateTotalVaccineFullDose<-COVID_US_Vaccines_Data_Working%>% group_by(Province_State) %>% summarize("Full Dose"=max(people_total_2nd_dose))
-USTotalVaccineFullDose<-as.numeric(sum(StateTotalVaccineFullDose$`Full Dose`))
-USTotalVaccineFullDoseString<-comma_format()(USTotalVaccineFullDose)
-
-
-##Percent of state population vaccinated##
-##Sum total State/Territory population using column from US Deaths .csv##
-StatePopulationWorking<-COVID_US_Deaths_Data_Original
-StatePopulationAggregate<-StatePopulationWorking%>%group_by(Province_State)%>%summarize("State Population"=sum(Population))
-StatePopulationAggregate[StatePopulationAggregate==0]<-NA
-StatePopulationAggregate<-na.omit(StatePopulationAggregate)
-TotalUSPopulation<-sum(StatePopulationAggregate$`State Population`)
-##Merge DFs to compare number of vaccinated individuals versus State/Territory populations##
-SingleDosePercentDF<-merge(StateTotalVaccineOneDose[,c("Province_State","Single Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
-FullDosePercentDF<-merge(StateTotalVaccineFullDose[,c("Province_State","Full Dose")], StatePopulationAggregate[,c("Province_State","State Population")])
-SingleDosePercentDF$Proportion<-(((SingleDosePercentDF$`Single Dose`))/(SingleDosePercentDF$`State Population`))
-FullDosePercentDF$Proportion<-(((FullDosePercentDF$`Full Dose`))/(FullDosePercentDF$`State Population`))
-
-##Other output metrics to feed sprintf statements below##
-USTotalVaccineOneDoseProportion<-(USTotalVaccineOneDose/TotalUSPopulation)
-USTotalVaccineOneDosePercentString<-label_percent()(USTotalVaccineOneDoseProportion)
-USTotalVaccineFullDoseProportion<-(USTotalVaccineFullDose/TotalUSPopulation)
-USTotalVaccineFullDosePercentString<-label_percent()(USTotalVaccineFullDoseProportion)
+##Percent of Population
+COVID_US_Vaccines_Data_Working$Proportion<-COVID_US_Vaccines_Data_Working$`Administered per 100K`/100000
+COVID_State_Vaccine_Proportion<-COVID_US_Vaccines_Data_Working[COVID_US_Vaccines_Data_Working$Proportion!=0,]
 
 ##Vaccine Plots##
-##Single Dose - Raw Numbers##
-StateVaccineSingleDosePlot<-ggplot(StateTotalVaccineOneDose, aes(x=Province_State, y=`Single Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Single Dose Recipients", title="Number of Recipients of a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
-ggplotly(StateVaccineSingleDosePlot)
+##Doses Administered - Raw Numbers##
+StateVaccineAdminPlot<-ggplot(COVID_US_Vaccines_Data_Working, aes(x=`State/Territory/Federal Entity`, y=`Total Administered`, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Recipients", title="Number of Recipients of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineAdminPlot)
 
-##Single Dose - Percent of Total Population##
-StateVaccineSingleDosePercentPlot<-ggplot(SingleDosePercentDF, aes(x=Province_State, y=Proportion, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Single Dose", title="Percent Population with a Single Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
-ggplotly(StateVaccineSingleDosePercentPlot)
-
-##Full Dose - Raw Numbers##
-StateVaccineFullDosePlot<-ggplot(StateTotalVaccineFullDose, aes(x=Province_State, y=`Full Dose`, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Full Dose Recipients", title="Number of Recipients of a Full Dose of COVID-19 Vaccine")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
-ggplotly(StateVaccineFullDosePlot)
-
-##Full Dose - Percent of Total Population##
-StateVaccineFullDosePercentPlot<-ggplot(FullDosePercentDF, aes(x=Province_State, y=Proportion, color=Province_State, fill=Province_State))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Full Dose", title="Percent Population with a Full Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
-ggplotly(StateVaccineFullDosePercentPlot)
+##Doses Administered - Percent of Total Population##
+StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Dose", title="Percent Population that's received a Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+ggplotly(StateVaccineAdminPercentPlot)
 
 ################################Outputs###################################################
 ##Create a Directory for Today##
@@ -280,10 +272,8 @@ orca(USDeathsPlot, "USDeathsPlot.png")
 orca(USCasePlot,"USCasePlot.png")
 orca(USNewCasePlot, "USNewCasePlot.png")
 orca(USNewDeathPlot, "USNewDeathPlot.png")
-orca(StateVaccineSingleDosePlot, "SingleVaccineDoseByState.png")
-orca(StateVaccineSingleDosePercentPlot, "SingleVaccineDoseByStatePercent.png")
-orca(StateVaccineFullDosePlot, "FullVaccineDoseByState.png")
-orca(StateVaccineFullDosePercentPlot, "FullVaccineDoseByStatePercent.png")
+orca(StateVaccineAdminPlot, "VaccineAdmin.png")
+orca(StateVaccineAdminPercentPlot, 'VaccineAdminPercent.png')
 
 ##Saves a copy of pertinent data and data frames as .csv files for today within your working directory##
 write_csv(NewCaseAggregatedByStateDFLong, "NewCasesPerDayByState.csv")
@@ -293,9 +283,7 @@ write_csv(USTotalNewDeathsByDateDF, "USNewDeathsPerDay.csv")
 write_csv(COVID_US_Cases_Data_Original, "CasesOriginalData.csv")
 write_csv(COVID_US_Deaths_Data_Original, "DeathsOriginalData.csv")
 write_csv(COVID_US_Vaccines_Data_Original, "VaccineOriginalData.csv")
-write_csv(COVID_US_Vaccines_Data_Original_Dictionary, "VaccineOriginalDataDictionary.csv")
-write_csv(StateTotalVaccineOneDose, "SingleVaccineDoseByState.csv")
-write_csv(StateTotalVaccineFullDose, "FullVaccineDoseByState.csv")
+
 
 ##Returns to original working directory##
 setwd(wd)
@@ -306,5 +294,4 @@ sprintf("The total number of COVID-19 cases in the United States from 2020-01-22
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
-sprintf("The number of people in the US that have received one dose of COVID-19 vaccine is %s. This is %s of the total US population.", USTotalVaccineOneDoseString, USTotalVaccineOneDosePercentString)
-sprintf("The number of people in the US that have received a full dose of COVID-19 vaccine is %s. This is %s of the total US population.", USTotalVaccineFullDoseString, USTotalVaccineFullDosePercentString)
+sprintf("The number of people in the US that have received the COVID-19 vaccine is %s.", USTotalVaccineAdminString)
