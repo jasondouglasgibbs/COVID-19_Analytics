@@ -6,17 +6,24 @@ output:
     vertical_layout: fill
     storyboard: true
 ---
+```{css, echo=FALSE}
+    caption{color: black}
+
+
+
+```
 
 ```{r setup, include=FALSE}
 ##COVID-19  flexdashboard based on my COVID-19 Data Pull, Aggregation, and Plotting Code##
 ##Code written by Jason Gibbs using the below listed packages and data from the Johns Hopkins CSSE GitHub page at https://github.com/CSSEGISandData/COVID-19 (COVID-19 cases and deaths data) and the CDC at https://covid.cdc.gov/covid-data-tracker/#vaccinations (vaccine data).##
 ##https://github.com/jasondouglasgibbs or jasondouglasgibbs@gmail.com##
 
-##You must have Orca properly installed from https://github.com/plotly/orca ##
 ##You must have Java JDK installed from https://www.oracle.com/java/technologies/javase-jdk15-downloads.html ##
 ##Download Chrome Driver for version 87.0.4280.88 --> https://chromedriver.storage.googleapis.com/index.html?path=87.0.4280.88/ ##
 
 library(flexdashboard)
+library(knitr)
+library(kableExtra)
 library(tidyverse)
 library(tidyselect)
 library(lubridate)
@@ -28,17 +35,18 @@ library(plotly)
 library(tidyr)
 library(RSelenium)
 library(netstat)
+library(data.table)
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
-downloadwd<-"D:\\Users\\fight\\Downloads"
+##setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
+##downloadwd<-"D:\\Users\\fight\\Downloads"
 
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-##setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
-##downloadwd<-"C:\\Users\\fight\\Downloads"
+setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+downloadwd<-"C:\\Users\\fight\\Downloads"
 
 #########################Case and Death Data Pulling and Summarizing##################################
 
@@ -235,12 +243,17 @@ fullpath<-file.path(downloadwd,'covid19_vaccinations_in_the_united_states.csv')
 file.remove(fullpath)
 options(warn=0)
 
-##RSelenium code to open the Chrome browser##
+##RSelenium code to open the Chrome browser.##
 rD<-rsDriver(browser="chrome", chromever = "87.0.4280.88", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
-##Sleep time to allow web page time to load##
+##Sleep time to allow web page time to load.##
 Sys.sleep(5)
+##Expands the "COVID-19 Vaccinations in the United States tab.##
+webElem<-remDr$findElement(using='id',value='vaccinations-table-header-icon')
+webElem$highlightElement()
+webElem$clickElement()
+##Clicks the button to download the CDC's .csv file for vaccinations.##
 webElem<-remDr$findElement(using='id', value='btnVaccinationsExport')
 webElem$highlightElement()
 webElem$clickElement()
@@ -269,7 +282,16 @@ StateVaccineAdminPlot<-ggplot(COVID_US_Vaccines_Data_Working, aes(x=`State/Terri
 #ggplotly(StateVaccineAdminPlot)
 
 ##Doses Administered - Percent of Total Population##
-StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Dose", title="Percent Population that's received a Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Dose", title="Percent Population Administered COVID-19 Vaccine by State")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+
+##Table displaying information also captured in the sprintf statements below##
+COVIDCaseString_Table<-"Cummulative COVID-19 Cases"
+COVIDDeathString_Table<-"Cummulative COVID-19 Deaths"
+COVIDVaccineString_Table<-"Vaccines Administered"
+Values_Table<-matrix(c(TotalCasesAggregated, TotalDeathsAggregated, USTotalVaccineAdmin), ncol=3, byrow=TRUE)
+colnames(Values_Table)<-c(COVIDCaseString_Table,COVIDDeathString_Table,COVIDVaccineString_Table)
+Values_Table<-data.frame(Values_Table, check.names=FALSE)
+Values_Table %>% mutate(`Cummulative COVID-19 Cases`=formatC(`Cummulative COVID-19 Cases`, format='f', big.mark=',', drop0trailing = TRUE), `Cummulative COVID-19 Deaths`=formatC(`Cummulative COVID-19 Deaths`, format='f', big.mark=',', drop0trailing = TRUE), `Vaccines Administered`=formatC(`Vaccines Administered`, format='f', big.mark=',', drop0trailing = TRUE))
 ```
 
 ```{r}
@@ -283,9 +305,13 @@ This dashboard allows you to explore some of the data connected to the ongoing C
 I plan on adding more features in the future, such as tabular data and more interactive functions. If you have ideas or are interested in my work, feel free to reach out to me at jasondouglasgibbs@gmail.com. You can also check my GitHub out [here](https://github.com/jasondouglasgibbs).
 
 
+This dashboard was created using RStudio and the R programming language with various packages. Data used to create these graphs are from [Johns Hopkins CSSE GitHub](https://github.com/CSSEGISandData/COVID-19) for cases/deaths and the [CDC's Vaccine Information Page](https://covid.cdc.gov/covid-data-tracker/#vaccinations).
 
+Below is a table containing a few COVID-19 values for the United States.
+```{r table}
+kable(Values_Table, format.args=list(big.mark=","), caption = "<center>**Table 1: Summary COVID-19 Values for the United States**<center>") %>% kableExtra::kable_styling(bootstrap_options = c("striped","hover","condensed", "responsive")) 
+```
 
-This dashboard was created using RStudio and the R programming language with various packages. Data used to create these graphs are from [Johns Hopkins CSSE GitHub](https://github.com/CSSEGISandData/COVID-19) for cases/deaths and [Centers for Civic Impact GitHub](https://github.com/govex/COVID-19/tree/master/data_tables/vaccine_data) for vaccine information.
 
 ```{r}
 #####################Page 1########################
@@ -320,7 +346,7 @@ ggplotly(DeathPlot)
 ```
 Vaccines
 =======================================================================
-### Plot showing the percent of total population that has received a dose of COVID-19 vaccine by state.
+### Plot showing percent of a State's population that has received a dose of the COVID-19 Vaccine.
 
 ```{r}
 ggplotly(StateVaccineAdminPercentPlot)

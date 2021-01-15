@@ -19,6 +19,7 @@ library(orca)
 library(processx)
 library(RSelenium)
 library(netstat)
+library(data.table)
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
@@ -230,12 +231,17 @@ fullpath<-file.path(downloadwd,'covid19_vaccinations_in_the_united_states.csv')
 file.remove(fullpath)
 options(warn=0)
 
-##RSelenium code to open the Chrome browser##
+##RSelenium code to open the Chrome browser.##
 rD<-rsDriver(browser="chrome", chromever = "87.0.4280.88", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
-##Sleep time to allow web page time to load##
+##Sleep time to allow web page time to load.##
 Sys.sleep(5)
+##Expands the "COVID-19 Vaccinations in the United States tab.##
+webElem<-remDr$findElement(using='id',value='vaccinations-table-header-icon')
+webElem$highlightElement()
+webElem$clickElement()
+##Clicks the button to download the CDC's .csv file for vaccinations.##
 webElem<-remDr$findElement(using='id', value='btnVaccinationsExport')
 webElem$highlightElement()
 webElem$clickElement()
@@ -264,7 +270,7 @@ StateVaccineAdminPlot<-ggplot(COVID_US_Vaccines_Data_Working, aes(x=`State/Terri
 ggplotly(StateVaccineAdminPlot)
 
 ##Doses Administered - Percent of Total Population##
-StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Dose", title="Percent Population that's received a Dose of COVID-19 Vaccine")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent Total Population Received Dose", title="Percent Population Administered COVID-19 Vaccine by State")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 ggplotly(StateVaccineAdminPercentPlot)
 
 ################################Outputs###################################################
@@ -295,8 +301,17 @@ write_csv(COVID_US_Vaccines_Data_Original, "VaccineOriginalData.csv")
 ##Returns to original working directory##
 setwd(wd)
 
+##Table displaying information also captured in the sprintf statements below##
+COVIDCaseString_Table<-"Cummulative COVID-19 Cases"
+COVIDDeathString_Table<-"Cummulative COVID-19 Deaths"
+COVIDVaccineString_Table<-"Vaccines Administered"
+Values_Table<-matrix(c(TotalCasesAggregated, TotalDeathsAggregated, USTotalVaccineAdmin), ncol=3, byrow=TRUE)
+colnames(Values_Table)<-c(COVIDCaseString_Table,COVIDDeathString_Table,COVIDVaccineString_Table)
+Values_Table<-data.frame(Values_Table, check.names=FALSE)
+Values_Table %>% mutate(`Cummulative COVID-19 Cases`=formatC(`Cummulative COVID-19 Cases`, format='f', big.mark=',', drop0trailing = TRUE), `Cummulative COVID-19 Deaths`=formatC(`Cummulative COVID-19 Deaths`, format='f', big.mark=',', drop0trailing = TRUE), `Vaccines Administered`=formatC(`Vaccines Administered`, format='f', big.mark=',', drop0trailing = TRUE)) %>% data.table()
 
-###Prints a number of descriptive statistics to the console##
+
+##Prints a number of descriptive statistics to the console##
 sprintf("The total number of COVID-19 cases in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalCasesString)
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
