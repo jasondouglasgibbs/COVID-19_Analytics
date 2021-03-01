@@ -255,22 +255,22 @@ Sys.sleep(5)
 remDr$close()
 
 ##Summarize Total Vaccines Administered##
-COVID_US_Vaccines_Data_Working[,2:5]<-sapply(COVID_US_Vaccines_Data_Working[,2:5], as.numeric)
+COVID_US_Vaccines_Data_Working[,2:16]<-sapply(COVID_US_Vaccines_Data_Working[,2:16], as.numeric)
 COVID_US_Vaccines_Data_Working[is.na(COVID_US_Vaccines_Data_Working)] <- 0
-USTotalVaccineAdmin<-as.numeric(sum(COVID_US_Vaccines_Data_Working$`Total Doses Administered`))
+USTotalVaccineAdmin<-as.numeric(sum(COVID_US_Vaccines_Data_Working$`Total Doses Administered by State where Administered`))
 USTotalVaccineAdminString<-comma_format()(USTotalVaccineAdmin)
 
 ##Percent of Population
-COVID_US_Vaccines_Data_Working$Proportion<-COVID_US_Vaccines_Data_Working$`Doses Administered per 100k`/100000
+COVID_US_Vaccines_Data_Working$Proportion<-COVID_US_Vaccines_Data_Working$`Percent of Total Pop with 1+ Doses by State of Residence`/100
 COVID_State_Vaccine_Proportion<-COVID_US_Vaccines_Data_Working[COVID_US_Vaccines_Data_Working$Proportion!=0,]
 
 ##Vaccine Plots##
 ##Doses Administered - Raw Numbers##
-StateVaccineAdminPlot<-ggplot(COVID_US_Vaccines_Data_Working, aes(x=`State/Territory/Federal Entity`, y=`Total Doses Administered`, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Vaccines Administered", title="COVID-19 Vaccines Administered by State")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+StateVaccineAdminPlot<-ggplot(COVID_US_Vaccines_Data_Working, aes(x=`State/Territory/Federal Entity`, y=`Total Doses Administered by State where Administered`, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Total Vaccines Administered", title="Total COVID-19 Vaccines Administered by State")+scale_y_continuous(labels=comma)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 ggplotly(StateVaccineAdminPlot)
 
 ##Doses Administered - Percent of Total Population##
-StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent of Population Received Vaccine", title="Percent Population Administered COVID-19 Vaccine by State")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
+StateVaccineAdminPercentPlot<-ggplot(COVID_State_Vaccine_Proportion, aes(x=`State/Territory/Federal Entity`, y=Proportion, color=`State/Territory/Federal Entity`, fill=`State/Territory/Federal Entity`))+geom_bar(stat='identity')+labs(y="Percent of Population with at least 1 Vaccine Dose", title="Percent Population Administered One COVID-19 Vaccine Dose by State")+scale_y_continuous(labels = scales::percent)+theme(legend.position = "bottom")+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 ggplotly(StateVaccineAdminPercentPlot)
 
 ################################Outputs###################################################
