@@ -316,4 +316,4 @@ sprintf("The total number of COVID-19 cases in the United States from 2020-01-22
 sprintf("The total number of COVID-19 deaths in the United States from 2020-01-22 through %s is %s.", yesterday, USTotalDeathsString)
 sprintf("The number of new COVID-19 cases reported in the United States on %s is %s.", yesterday, USNewCasesString)
 sprintf("The number of new COVID-19 deaths reported in the United States on %s is %s.", yesterday, USNewDeathsString)
-sprintf("The number of people in the US that have received the COVID-19 vaccine is %s.", USTotalVaccineAdminString)
+sprintf("The number of COVID-19 vaccines administered in the US is %s.", USTotalVaccineAdminString)
