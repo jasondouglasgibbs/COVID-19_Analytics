@@ -261,7 +261,7 @@ USTotalVaccineAdmin<-as.numeric(sum(COVID_US_Vaccines_Data_Working$`Total Doses 
 USTotalVaccineAdminString<-comma_format()(USTotalVaccineAdmin)
 
 ##Percent of Population
-COVID_US_Vaccines_Data_Working$Proportion<-COVID_US_Vaccines_Data_Working$`Percent of Total Pop with 1+ Doses by State of Residence`/100
+COVID_US_Vaccines_Data_Working$Proportion<-COVID_US_Vaccines_Data_Working$`Percent of Total Pop with at least One Dose by State of Residence`/100
 COVID_State_Vaccine_Proportion<-COVID_US_Vaccines_Data_Working[COVID_US_Vaccines_Data_Working$Proportion!=0,]
 
 ##Vaccine Plots##
