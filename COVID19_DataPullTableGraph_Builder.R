@@ -4,7 +4,7 @@
 
 ##You must have Orca properly installed from https://github.com/plotly/orca ##
 ##You must have Java JDK installed from https://www.oracle.com/java/technologies/javase-jdk15-downloads.html ##
-##Download Chrome Driver for version 87.0.4280.88 --> https://chromedriver.storage.googleapis.com/index.html?path=87.0.4280.88/ ##
+##Download Chrome Driver for version  89.0.4389.23 --> https://chromedriver.storage.googleapis.com/index.html?path=89.0.4389.23/ ##
 
 library(tidyverse)
 library(tidyselect)
@@ -232,7 +232,7 @@ file.remove(fullpath)
 options(warn=0)
 
 ##RSelenium code to open the Chrome browser.##
-rD<-rsDriver(browser="chrome", chromever = "87.0.4280.88", port=netstat::free_port())
+rD<-rsDriver(browser="chrome", chromever = "89.0.4389.23", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
 ##Sleep time to allow web page time to load.##
