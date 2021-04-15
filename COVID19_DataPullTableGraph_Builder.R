@@ -247,7 +247,7 @@ webElem$highlightElement()
 webElem$clickElement()
 Sys.sleep(10)
 
-COVID_US_Vaccines_Data_Original<-read_csv(fullpath, skip=3)
+COVID_US_Vaccines_Data_Original<-read_csv(fullpath, skip=2)
 COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original[order(COVID_US_Vaccines_Data_Original$`State/Territory/Federal Entity`),]
 
 
