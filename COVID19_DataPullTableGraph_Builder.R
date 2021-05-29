@@ -232,7 +232,7 @@ file.remove(fullpath)
 options(warn=0)
 
 ##RSelenium code to open the Chrome browser.##
-rD<-rsDriver(browser="chrome", chromever = "89.0.4389.23", port=netstat::free_port())
+rD<-rsDriver(browser="chrome", chromever = "91.0.4472.19", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
 ##Sleep time to allow web page time to load.##
@@ -241,8 +241,12 @@ Sys.sleep(5)
 webElem<-remDr$findElement(using='id',value='vaccinations-table-header-icon')
 webElem$highlightElement()
 webElem$clickElement()
+webElem$highlightElement()
+webElem$clickElement()
 ##Clicks the button to download the CDC's .csv file for vaccinations.##
 webElem<-remDr$findElement(using='id', value='btnVaccinationsExport')
+webElem$highlightElement()
+webElem$clickElement()
 webElem$highlightElement()
 webElem$clickElement()
 Sys.sleep(10)
