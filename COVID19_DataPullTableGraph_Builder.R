@@ -23,14 +23,14 @@ library(data.table)
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-#setwd("D:\\Users\\fight\\Documents\\COVID19 Code")
-#downloadwd<-"D:\\Users\\fight\\Downloads"
+setwd("D:\\Users\\fight\\Documents\\COVID-19_Analytics")
+downloadwd<-"D:\\Users\\fight\\Downloads"
 
 
 ##Set working and default download directory for personal laptop.##
 ##Default download directory required to automatically pull CDC vaccine data.##
-setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
-downloadwd<-"C:\\Users\\fight\\Downloads"
+# setwd("C:\\Users\\fight\\Documents\\COVID-19 R File")
+# downloadwd<-"C:\\Users\\fight\\Downloads"
 
 
 ##Sets a variable for the working directory for use at the end of the script##
@@ -232,7 +232,7 @@ file.remove(fullpath)
 options(warn=0)
 
 ##RSelenium code to open the Chrome browser.##
-rD<-rsDriver(browser="chrome", chromever = "93.0.4577.15", port=netstat::free_port())
+rD<-rsDriver(browser="chrome", chromever = "96.0.4664.45", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
 ##Sleep time to allow web page time to load.##
@@ -251,7 +251,7 @@ webElem$highlightElement()
 webElem$clickElement()
 Sys.sleep(10)
 
-COVID_US_Vaccines_Data_Original<-read_csv(fullpath, skip=2)
+COVID_US_Vaccines_Data_Original<-read_csv(fullpath, skip=4)
 COVID_US_Vaccines_Data_Working<-COVID_US_Vaccines_Data_Original[order(COVID_US_Vaccines_Data_Original$`State/Territory/Federal Entity`),]
 
 
