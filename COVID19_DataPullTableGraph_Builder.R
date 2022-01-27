@@ -40,6 +40,7 @@ wd<-getwd()
 
 ##US Confirmed Cases##
 ##Pulls data from Johns Hopkins CSSE GitHub at the below link, turns into a TidyVerse tibble##
+
 URL_Cases<-"https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_US.csv"
 COVID_US_Cases_Data<-read_csv(URL_Cases)
 COVID_US_Cases_Data_Original<-COVID_US_Cases_Data
