@@ -233,7 +233,7 @@ file.remove(fullpath)
 options(warn=0)
 
 ##RSelenium code to open the Chrome browser.##
-rD<-rsDriver(browser="chrome", chromever = "98.0.4758.102", port=netstat::free_port())
+rD<-rsDriver(browser="chrome", chromever = "102.0.5005.61", port=netstat::free_port())
 remDr <- rD$client
 remDr$navigate("https://covid.cdc.gov/covid-data-tracker/#vaccinations")
 ##Sleep time to allow web page time to load.##
